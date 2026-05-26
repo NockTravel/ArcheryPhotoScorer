@@ -495,11 +495,14 @@ function loadSingleImage(image){
 
 function loadSlotImage(image,i){
   angleImages[i]=image;
+  // Downsample immediately on load
+  const scale=Math.min(1,MAX_DIM/Math.max(image.width,image.height));
+  const w=Math.round(image.width*scale),h=Math.round(image.height*scale);
   const tmp=document.createElement('canvas');
-  tmp.width=image.width;tmp.height=image.height;
-  tmp.getContext('2d').drawImage(image,0,0);
-  const d=tmp.getContext('2d').getImageData(0,0,image.width,image.height);
-  d._w=image.width;d._h=image.height;
+  tmp.width=w;tmp.height=h;
+  tmp.getContext('2d').drawImage(image,0,0,w,h);
+  const d=tmp.getContext('2d').getImageData(0,0,w,h);
+  d._w=w;d._h=h;d._scale=scale;
   angleImageDatas[i]=d;
   const slot=document.getElementById(`slot-${i}`);
   slot.innerHTML='';
@@ -546,14 +549,47 @@ function setStatus(type,msg){
   bar.innerHTML=`<i class="ti ${icons[type]||icons.info}" aria-hidden="true"></i><span>${msg}</span>`;
 }
 
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+function showSpinner(msg){
+  let el=document.getElementById('spinnerOverlay');
+  if(!el){
+    el=document.createElement('div');
+    el.id='spinnerOverlay';
+    el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;gap:12px';
+    el.innerHTML=`<div style="width:36px;height:36px;border:3px solid rgba(200,255,0,.2);border-top-color:#c8ff00;border-radius:50%;animation:spin .7s linear infinite"></div><div id="spinnerMsg" style="color:#c8ff00;font-size:14px;font-family:DM Sans,sans-serif"></div>`;
+    if(!document.getElementById('spinStyle')){
+      const s=document.createElement('style');
+      s.id='spinStyle';s.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(s);
+    }
+    document.body.appendChild(el);
+  }
+  document.getElementById('spinnerMsg').textContent=msg||'Processing...';
+  el.style.display='flex';
+}
+function hideSpinner(){
+  const el=document.getElementById('spinnerOverlay');
+  if(el) el.style.display='none';
+}
+
 // ─── Pixel helpers ────────────────────────────────────────────────────────────
+const MAX_DIM=800; // downsample to this before any pixel work
+
 function getImgData(image){
+  const scale=Math.min(1,MAX_DIM/Math.max(image.width,image.height));
+  const w=Math.round(image.width*scale);
+  const h=Math.round(image.height*scale);
   const tmp=document.createElement('canvas');
-  tmp.width=image.width;tmp.height=image.height;
-  tmp.getContext('2d').drawImage(image,0,0);
-  const d=tmp.getContext('2d').getImageData(0,0,image.width,image.height);
-  d._w=image.width;d._h=image.height;
+  tmp.width=w;tmp.height=h;
+  tmp.getContext('2d').drawImage(image,0,0,w,h);
+  const d=tmp.getContext('2d').getImageData(0,0,w,h);
+  d._w=w;d._h=h;d._scale=scale;
   return d;
+}
+
+// Scale a point from downsampled space back to display canvas space
+function scalePoint(x,y,scale){
+  return{x:Math.round(x/scale),y:Math.round(y/scale)};
 }
 
 function rgbAt(data,x,y){
@@ -642,8 +678,32 @@ function buildPerspectiveTransform(ellipse,goldFrac){
   };
 }
 
-// ─── Clustering ───────────────────────────────────────────────────────────────
+// ─── Clustering (grid-accelerated, not O(n²)) ─────────────────────────────────
 function clusterPoints(pts,eps){
+  if(!pts.length) return[];
+  // Build spatial grid for O(1) neighbour lookup
+  const cellSize=eps;
+  const minX=pts.reduce((m,p)=>Math.min(m,p.x),Infinity);
+  const minY=pts.reduce((m,p)=>Math.min(m,p.y),Infinity);
+  const grid=new Map();
+  const key=(x,y)=>`${Math.floor((x-minX)/cellSize)},${Math.floor((y-minY)/cellSize)}`;
+  pts.forEach((p,i)=>{const k=key(p.x,p.y);if(!grid.has(k))grid.set(k,[]);grid.get(k).push(i);});
+
+  function neighbours(i){
+    const p=pts[i];
+    const cx=Math.floor((p.x-minX)/cellSize),cy=Math.floor((p.y-minY)/cellSize);
+    const result=[];
+    for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++){
+      const bucket=grid.get(`${cx+dx},${cy+dy}`);
+      if(!bucket) continue;
+      bucket.forEach(j=>{
+        const ddx=pts[j].x-p.x,ddy=pts[j].y-p.y;
+        if(ddx*ddx+ddy*ddy<=eps*eps) result.push(j);
+      });
+    }
+    return result;
+  }
+
   const visited=new Uint8Array(pts.length);
   const clusters=[];
   for(let i=0;i<pts.length;i++){
@@ -651,12 +711,10 @@ function clusterPoints(pts,eps){
     visited[i]=1;
     const cluster=[pts[i]],queue=[i];
     while(queue.length){
-      const ci=queue.shift(),cp=pts[ci];
-      for(let j=0;j<pts.length;j++){
-        if(visited[j]) continue;
-        const dx=pts[j].x-cp.x,dy=pts[j].y-cp.y;
-        if(dx*dx+dy*dy<=eps*eps){visited[j]=1;cluster.push(pts[j]);queue.push(j);}
-      }
+      const ci=queue.shift();
+      neighbours(ci).forEach(j=>{
+        if(!visited[j]){visited[j]=1;cluster.push(pts[j]);queue.push(j);}
+      });
     }
     clusters.push(cluster);
   }
@@ -679,8 +737,22 @@ function findDarkClusters(data,cx,cy,r){
     if(isDark(rv,g,b)) pts.push({x,y});
   }
   if(pts.length<8) return[];
-  const eps=Math.max(10,Math.round(r*0.05));
-  return clusterPoints(pts,eps);
+  const eps=Math.max(6,Math.round(r*0.05));
+  const clusters=clusterPoints(pts,eps);
+
+  // Enforce minimum distance between cluster centroids to prevent merging
+  // separate arrows — reject clusters whose centroid is too close to a larger one
+  const minDist=Math.max(8,Math.round(r*0.06));
+  const accepted=[];
+  clusters.forEach(c=>{
+    const ct=centroid(c);
+    const tooClose=accepted.some(a=>{
+      const dx=a.ct.x-ct.x,dy=a.ct.y-ct.y;
+      return dx*dx+dy*dy<minDist*minDist;
+    });
+    if(!tooClose) accepted.push({c,ct});
+  });
+  return accepted.map(a=>a.c);
 }
 
 // ─── Score calculation ────────────────────────────────────────────────────────
@@ -703,22 +775,27 @@ function runDetection(){
 // ─── Single-face detection ────────────────────────────────────────────────────
 function runDetectionSingle(){
   arrows=[];tapMode=false;tapCanvas.style.cursor='default';
-  setStatus('info','Scanning for target...');
+  setStatus('info','Scanning...');showSpinner('Finding target...');
   setTimeout(()=>{
     const data=getImgData(img);
+    const sc=data._scale||1;
     const gc=findGoldCentroid(data);
-    if(!gc){setStatus('warn','Gold zone not found — switching to tap mode');enterTapMode(false,true);return;}
+    if(!gc){hideSpinner();setStatus('warn','Gold zone not found — switching to tap mode');enterTapMode(false,true);return;}
     const gr=estimateGoldRadius(data,gc.x,gc.y);
-    if(gr<8){setStatus('warn','Target too small — switching to tap mode');enterTapMode(false,true);return;}
-    targetCenter=gc;
+    if(gr<5){hideSpinner();setStatus('warn','Target too small — switching to tap mode');enterTapMode(false,true);return;}
+    // Scale centre and radius back to display canvas space
+    const dispC=scalePoint(gc.x,gc.y,sc);
     const face=getFace(currentFace);
     const goldFrac=face.ringFractions[face.ringFractions.length-2];
-    targetRadius=Math.round(gr/goldFrac);
+    targetCenter=dispC;
+    targetRadius=Math.round((gr/goldFrac)/sc);
+    showSpinner('Scanning for arrows...');
     setStatus('info','Target found — scanning for arrows...');
     renderOverlay();
     setTimeout(()=>{
-      const clusters=findDarkClusters(data,gc.x,gc.y,targetRadius);
-      const minSize=Math.max(5,10);
+      const clusters=findDarkClusters(data,gc.x,gc.y,gr/goldFrac);
+      hideSpinner();
+      const minSize=3;
       const good=clusters.filter(c=>c.length>=minSize);
       if(!good.length){
         setStatus('warn','No arrow shafts detected — tap arrows manually');
@@ -726,7 +803,8 @@ function runDetectionSingle(){
       }
       arrows=good.slice(0,arrowsPerEnd).map(c=>{
         const ct=centroid(c);
-        return{x:ct.x,y:ct.y,score:calcScore(ct.x,ct.y,targetCenter.x,targetCenter.y,targetRadius)};
+        const dp=scalePoint(ct.x,ct.y,sc);
+        return{x:dp.x,y:dp.y,score:calcScore(dp.x,dp.y,targetCenter.x,targetCenter.y,targetRadius)};
       });
       renderOverlay();updateArrowChips();updateSaveBtn();
       if(arrows.length<arrowsPerEnd){
@@ -742,47 +820,40 @@ function runDetectionSingle(){
 // ─── 3-spot detection ─────────────────────────────────────────────────────────
 function runDetection3Spot(){
   spotStates=[];tapMode=false;tapCanvas.style.cursor='default';
-  setStatus('info','Scanning for 3 spot targets...');
+  setStatus('info','Scanning for 3 spot targets...');showSpinner('Finding spots...');
   setTimeout(()=>{
     const data=getImgData(img);
+    const sc=data._scale||1;
     const face=getFace(currentFace);
-
-    // Find all gold blobs
     const centroids=findAllGoldCentroids(data);
     if(centroids.length<1){
-      setStatus('warn','No gold zones found — tap to place spot centres manually');
+      hideSpinner();setStatus('warn','No gold zones found — tap to place spot centres manually');
       enter3SpotTapMode(true);return;
     }
-
-    // We expect exactly 3 spots; take the 3 largest gold blobs
     const spots=centroids.slice(0,3);
-
-    // Sort spots based on layout
     const sorted=sortSpots(spots,face.layout);
-
-    // Estimate radius for each spot from its gold radius
-    const goldFrac=SPOT_FACE.ringFractions[1]; // 10-ring fraction = 0.5 of spot radius
+    const goldFrac=SPOT_FACE.ringFractions[1];
     spotStates=sorted.map((s,i)=>{
       const gr=estimateGoldRadius(data,s.x,s.y);
-      const spotR=gr>4?Math.round(gr/goldFrac):Math.round(Math.min(photoW,photoH)*0.12);
-      return{center:{x:s.x,y:s.y},radius:spotR,arrow:null,label:face.spotLabels[i]};
+      const spotRdown=gr>4?Math.round(gr/goldFrac):Math.round(Math.min(data._w,data._h)*0.12);
+      const dispC=scalePoint(s.x,s.y,sc);
+      const spotR=Math.round(spotRdown/sc);
+      return{center:dispC,radius:spotR,arrow:null,label:face.spotLabels[i],_cx:s.x,_cy:s.y,_r:spotRdown};
     });
-
+    showSpinner('Scanning for arrows...');
     setStatus('info',`Found ${spotStates.length} spots — scanning for arrows...`);
     renderOverlay();
-
     setTimeout(()=>{
-      // For each spot, find the nearest dark cluster
       spotStates.forEach((spot,i)=>{
-        const clusters=findDarkClusters(data,spot.center.x,spot.center.y,spot.radius*1.2);
+        const clusters=findDarkClusters(data,spot._cx,spot._cy,spot._r*1.2);
         if(clusters.length>0){
           const ct=centroid(clusters[0]);
-          spot.arrow={x:ct.x,y:ct.y,score:calcScore(ct.x,ct.y,spot.center.x,spot.center.y,spot.radius)};
+          const dp=scalePoint(ct.x,ct.y,sc);
+          spot.arrow={x:dp.x,y:dp.y,score:calcScore(dp.x,dp.y,spot.center.x,spot.center.y,spot.radius)};
         }
       });
-
+      hideSpinner();
       renderOverlay();updateArrowChips();updateSaveBtn();
-
       const found=spotStates.filter(s=>s.arrow).length;
       if(found<3){
         setStatus('warn',`Found ${found}/3 arrows — tap missing spots to add`);
@@ -1132,6 +1203,7 @@ function resetSession(){
 // ─── Multi-angle (single face only) ───────────────────────────────────────────
 function processMultiAngle(){
   setStatus('info','Detecting targets in each photo...');
+  showSpinner('Processing photo 1...');
   document.getElementById('multiSlots').style.display='none';
   document.getElementById('cameraArea').style.display='block';
   document.getElementById('angleProgress').style.display='flex';
@@ -1141,7 +1213,39 @@ function processMultiAngle(){
   pCtx.drawImage(refImg,0,0);
   currentAngleView=0;
   updateAngleProgress(-1);
-  setTimeout(()=>detectAllAngles(),80);
+  // Use setTimeout per angle to keep UI responsive
+  detectAngleStep(0,[]);
+}
+
+function detectAngleStep(i,results){
+  if(i>=numAngles){
+    hideSpinner();
+    triangulateArrows(results);
+    return;
+  }
+  updateAngleProgress(i);
+  showSpinner(`Processing photo ${i+1} of ${numAngles}...`);
+  setTimeout(()=>{
+    const face=getFace(currentFace);
+    const goldFrac=face.ringFractions[face.ringFractions.length-2];
+    const data=angleImageDatas[i];
+    const sc=data._scale||1;
+    const ellipse=fitGoldEllipse(data);
+    if(!ellipse){hideSpinner();setStatus('warn',`Photo ${i+1}: gold zone not found`);showFirstImageAndTap();return;}
+    const goldR=ellipse.a,targetR=goldR/goldFrac;
+    // Store scaled-up version for display
+    angleTargets[i]={
+      center:scalePoint(ellipse.cx,ellipse.cy,sc),
+      radius:Math.round(targetR/sc),
+      ellipse,_scale:sc
+    };
+    const transform=buildPerspectiveTransform(ellipse,goldFrac);
+    if(!transform){hideSpinner();setStatus('warn',`Photo ${i+1}: perspective failed`);showFirstImageAndTap();return;}
+    const clusters=findDarkClusters(data,ellipse.cx,ellipse.cy,targetR);
+    const good=clusters.filter(c=>c.length>=3).slice(0,arrowsPerEnd);
+    results.push({transform,arrowsNorm:good.map(c=>{const ct=centroid(c);return transform(ct.x,ct.y);})});
+    detectAngleStep(i+1,results);
+  },80);
 }
 
 function updateAngleProgress(cur){
@@ -1151,27 +1255,6 @@ function updateAngleProgress(cur){
     if(i<cur) cls+=' done';else if(i===cur) cls+=' current';
     return`<div class="${cls}"><span class="step-name">${i<cur?'✓ ':''}${l}</span></div>`;
   }).join('');
-}
-
-function detectAllAngles(){
-  const face=getFace(currentFace);
-  const goldFrac=face.ringFractions[face.ringFractions.length-2];
-  const results=[];
-  for(let i=0;i<numAngles;i++){
-    updateAngleProgress(i);
-    const data=angleImageDatas[i];
-    const ellipse=fitGoldEllipse(data);
-    if(!ellipse){setStatus('warn',`Photo ${i+1}: gold zone not found`);showFirstImageAndTap();return;}
-    const goldR=ellipse.a,targetR=goldR/goldFrac;
-    angleTargets[i]={center:{x:ellipse.cx,y:ellipse.cy},radius:targetR,ellipse};
-    const transform=buildPerspectiveTransform(ellipse,goldFrac);
-    if(!transform){setStatus('warn',`Photo ${i+1}: perspective failed`);showFirstImageAndTap();return;}
-    const clusters=findDarkClusters(data,ellipse.cx,ellipse.cy,targetR);
-    const good=clusters.filter(c=>c.length>=6).slice(0,arrowsPerEnd);
-    results.push({transform,arrowsNorm:good.map(c=>{const ct=centroid(c);return transform(ct.x,ct.y);})});
-  }
-  updateAngleProgress(numAngles);
-  triangulateArrows(results);
 }
 
 function triangulateArrows(results){
@@ -1230,4 +1313,4 @@ if('serviceWorker' in navigator){
 }
 </script>
 </body>
-</html>
+                                                                     </html>
