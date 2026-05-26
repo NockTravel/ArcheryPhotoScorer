@@ -1,0 +1,18 @@
+{
+  "name": "Archery Scorer",
+  "short_name": "Archery",
+  "description": "Score archery targets from photos — fully local, no uploads",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
