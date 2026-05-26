@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f0f0f;--bg2:#181818;--bg3:#222;--bg4:#2a2a2a;
+  --bg:#0f0f0f;--bg2:#181818;--bg3:#222;
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
   --text:#f0f0f0;--text2:#999;--text3:#555;
   --accent:#c8ff00;--accent-dark:#8fb800;
@@ -27,16 +27,12 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;overscroll-behavior:none}
 #app{max-width:520px;margin:0 auto;padding:calc(var(--safe-top) + 1rem) 1rem calc(var(--safe-bottom) + 5rem)}
-
-/* Header */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-top:.25rem}
 .header-left{display:flex;align-items:center;gap:10px}
 .logo{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .logo i{color:#000;font-size:20px}
 .app-title{font-size:17px;font-weight:600;letter-spacing:-.3px}
 .session-badge{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);font-family:var(--mono)}
-
-/* Settings */
 .settings-bar{display:flex;gap:8px;margin-bottom:.75rem;align-items:center;flex-wrap:wrap}
 .pill-group{display:flex;gap:4px;flex-wrap:wrap}
 .pill{font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap}
@@ -46,8 +42,6 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 .arrows-input label{font-size:12px;color:var(--text2)}
 .arrows-input input{width:44px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--mono);font-size:14px;text-align:center;padding:0}
 .arrows-input input:focus{outline:none;border-color:var(--accent)}
-
-/* Multi-angle toggle */
 .angle-bar{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:.6rem .75rem;background:var(--bg2);border-radius:var(--radius-sm);border:1px solid var(--border)}
 .angle-bar-label{font-size:13px;color:var(--text2);flex:1}
 .angle-bar-label span{display:block;font-size:11px;color:var(--text3);margin-top:1px}
@@ -55,7 +49,12 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 .toggle-btn{font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--font)}
 .toggle-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:500}
 
-/* Photo slots for multi-angle */
+/* 3-spot info banner */
+.spot-info{padding:.6rem .75rem;background:rgba(200,255,0,0.05);border:1px solid rgba(200,255,0,0.15);border-radius:var(--radius-sm);margin-bottom:.75rem;font-size:12px;color:var(--text2);display:none;gap:8px;align-items:flex-start}
+.spot-info i{color:var(--accent);font-size:15px;flex-shrink:0;margin-top:1px}
+.spot-info.visible{display:flex}
+
+/* Photo slots */
 .photo-slots{display:grid;gap:8px;margin-bottom:.75rem}
 .photo-slots.slots-1{grid-template-columns:1fr}
 .photo-slots.slots-2{grid-template-columns:1fr 1fr}
@@ -64,13 +63,11 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 .photo-slot:active{transform:scale(.97)}
 .photo-slot.filled{border-style:solid;border-color:var(--accent)}
 .photo-slot i{font-size:22px;color:var(--text3)}
-.photo-slot.filled i.ti-check{font-size:20px;color:var(--accent)}
 .photo-slot-label{font-size:11px;color:var(--text3);text-align:center;line-height:1.3}
-.photo-slot.filled .photo-slot-label{color:var(--accent)}
 .slot-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
 .slot-badge{position:absolute;top:4px;right:4px;background:var(--accent);color:#000;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:600;font-family:var(--mono)}
 
-/* Upload zone (single photo mode) */
+/* Upload zone */
 .upload-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:2.5rem 1rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2);position:relative;overflow:hidden}
 .upload-zone::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(200,255,0,0.04) 0%,transparent 70%);pointer-events:none}
 .upload-zone:active{background:var(--bg3);transform:scale(.99)}
@@ -98,15 +95,17 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 
 /* Multi-angle progress */
 .angle-progress{display:flex;gap:6px;margin-bottom:.75rem}
-.angle-step{flex:1;padding:6px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);font-size:11px;color:var(--text3);text-align:center;transition:all .2s}
+.angle-step{flex:1;padding:6px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);font-size:11px;color:var(--text3);text-align:center}
 .angle-step.current{border-color:var(--accent);color:var(--accent);background:rgba(200,255,0,.06)}
 .angle-step.done{border-color:var(--success);color:var(--success);background:rgba(77,255,145,.06)}
 .angle-step .step-name{font-weight:500;font-size:12px;display:block}
-.angle-step .step-sub{font-size:10px;margin-top:1px;opacity:.7}
 
-/* Triangulation result */
+/* 3-spot face subheadings in arrow chips */
+.spot-group-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;width:100%;margin-top:.25rem;margin-bottom:2px;font-family:var(--mono)}
+.spot-group-label:first-child{margin-top:0}
+
+/* Tri result */
 .tri-result{padding:.6rem .75rem;background:rgba(200,255,0,.06);border:1px solid rgba(200,255,0,.2);border-radius:var(--radius-sm);margin-bottom:.75rem;font-size:12px;color:var(--accent)}
-.tri-result strong{font-family:var(--mono);font-size:14px}
 
 /* Arrow chips */
 .arrow-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem}
@@ -132,8 +131,6 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 .score-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
 .score-total{font-size:32px;font-weight:600;font-family:var(--mono);color:var(--accent)}
 .score-meta{font-size:12px;color:var(--text3);font-family:var(--mono)}
-.score-actions{display:flex;gap:6px}
-.ends-list{}
 .end-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.25rem;border-bottom:1px solid var(--border);font-size:13px;gap:12px}
 .end-row:last-child{border-bottom:none}
 .end-label{color:var(--text3);font-size:11px;font-family:var(--mono);min-width:40px}
@@ -147,7 +144,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 .modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1rem}
 .modal-title{font-size:15px;font-weight:500;margin-bottom:1rem}
 .score-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:.75rem}
-.score-grid-btn{padding:10px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer;text-align:center;transition:all .1s}
+.score-grid-btn{padding:10px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer;text-align:center}
 .score-grid-btn:active{transform:scale(.94)}
 .score-grid-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
 .miss-row{margin-bottom:1rem}
@@ -158,7 +155,6 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .score-panel{animation:slideUp .25s ease}
-.arrow-chip{animation:slideUp .15s ease}
 </style>
 </head>
 <body>
@@ -172,21 +168,29 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
   <span class="session-badge" id="sessionBadge">0 pts</span>
 </div>
 
-<!-- Settings row -->
+<!-- Face selector -->
 <div class="settings-bar">
   <div class="pill-group" id="faceSelector">
     <button class="pill active" data-face="outdoor" onclick="setFace(this)">Outdoor</button>
     <button class="pill" data-face="field" onclick="setFace(this)">Field</button>
     <button class="pill" data-face="indoor" onclick="setFace(this)">Indoor</button>
+    <button class="pill" data-face="vertical3" onclick="setFace(this)">Vertical 3</button>
+    <button class="pill" data-face="triangle3" onclick="setFace(this)">Triangle 3</button>
   </div>
-  <div class="arrows-input">
+  <div class="arrows-input" id="arrowsInputWrap">
     <label for="arrowCount">Arrows</label>
     <input type="number" id="arrowCount" value="3" min="1" max="12" inputmode="numeric">
   </div>
 </div>
 
+<!-- 3-spot info banner -->
+<div class="spot-info" id="spotInfo">
+  <i class="ti ti-info-circle" aria-hidden="true"></i>
+  <span id="spotInfoText"></span>
+</div>
+
 <!-- Multi-angle toggle -->
-<div class="angle-bar">
+<div class="angle-bar" id="angleBar">
   <div class="angle-bar-label">
     Photo angles
     <span>More angles = better accuracy on borderline arrows</span>
@@ -198,8 +202,8 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
   </div>
 </div>
 
-<!-- Single-photo upload (shown when angles=1 or in single mode) -->
-<div id="uploadZone" class="upload-zone" onclick="document.getElementById('fileInput').click()" role="button" aria-label="Upload target photo">
+<!-- Single upload -->
+<div id="uploadZone" class="upload-zone" onclick="document.getElementById('fileInput').click()" role="button">
   <div class="upload-icon"><i class="ti ti-camera" aria-hidden="true"></i></div>
   <div class="upload-title" id="uploadTitle">Take or upload a photo</div>
   <div class="upload-sub" id="uploadSub">Point at your target after shooting</div>
@@ -207,7 +211,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
   <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event,0)">
 </div>
 
-<!-- Multi-angle slots (shown when angles=2 or 3) -->
+<!-- Multi-angle slots -->
 <div id="multiSlots" style="display:none">
   <div class="photo-slots" id="photoSlots"></div>
   <button class="btn primary" id="processMultiBtn" onclick="processMultiAngle()" style="width:100%;justify-content:center;margin-bottom:.75rem;display:none">
@@ -252,13 +256,13 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
       <div class="score-total" id="totalScore">0</div>
       <div class="score-meta" id="scoreMeta">0 ends · 0 arrows</div>
     </div>
-    <div class="score-actions">
+    <div>
       <button class="btn ghost" onclick="resetSession()" style="font-size:12px;padding:7px 10px">
         <i class="ti ti-trash" aria-hidden="true"></i>Reset
       </button>
     </div>
   </div>
-  <div id="endsList" class="ends-list"></div>
+  <div id="endsList"></div>
 </div>
 
 </div>
@@ -267,7 +271,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 <div id="correctModal" class="modal-backdrop" style="display:none" onclick="closeModalOutside(event)">
   <div class="modal-card">
     <div class="modal-handle"></div>
-    <div class="modal-title">Correct score — arrow <span id="modalArrowNum">1</span></div>
+    <div class="modal-title" id="modalTitle">Correct score</div>
     <div class="score-grid" id="scoreGrid"></div>
     <div class="miss-row"><button class="miss-btn" onclick="setCorrectScore('M')">Miss (0 pts)</button></div>
     <div class="modal-actions">
@@ -277,61 +281,100 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
   </div>
 </div>
 
-<!-- Hidden file inputs for multi-angle -->
 <div id="hiddenInputs" style="display:none"></div>
 
 <script>
-// ─── Face definitions ────────────────────────────────────────────────────────
-const FACES = {
+// ─── Face definitions ─────────────────────────────────────────────────────────
+// Standard single-face targets
+const SINGLE_FACE = {
   outdoor:{
+    label:'WA Outdoor',multiSpot:false,
     scores:['X',10,9,8,7,6,5,4,3,2,1],
     colors:{'X':'#FFD600',10:'#FFD600',9:'#FFD600',8:'#EF5350',7:'#EF5350',6:'#4FC3F7',5:'#4FC3F7',4:'#777',3:'#777',2:'#ddd',1:'#ddd','M':'transparent'},
     textColors:{'X':'#000',10:'#000',9:'#000',8:'#fff',7:'#fff',6:'#000',5:'#000',4:'#fff',3:'#fff',2:'#333',1:'#333','M':'#ff4d4d'},
     ringFractions:[1,.9,.8,.7,.6,.5,.4,.3,.2,.1,.05],
-    scoreAtFrac(f){
-      const fr=this.ringFractions;
-      for(let i=fr.length-1;i>=0;i--) if(f<=fr[i]) return this.scores[i]??this.scores[this.scores.length-1];
-      return 'M';
-    }
+    scoreAtFrac(f){const fr=this.ringFractions;for(let i=fr.length-1;i>=0;i--)if(f<=fr[i])return this.scores[i]??this.scores[this.scores.length-1];return 'M';}
   },
   field:{
+    label:'WA Field',multiSpot:false,
     scores:['X',6,5,4,3,2,1],
     colors:{'X':'#FFD600',6:'#FFD600',5:'#1976D2',4:'#1976D2',3:'#1976D2',2:'#1976D2',1:'#1976D2','M':'transparent'},
     textColors:{'X':'#000',6:'#000',5:'#fff',4:'#fff',3:'#fff',2:'#fff',1:'#fff','M':'#ff4d4d'},
     ringFractions:[1,.833,.667,.5,.333,.167,.083],
-    scoreAtFrac(f){
-      const fr=this.ringFractions;
-      for(let i=fr.length-1;i>=0;i--) if(f<=fr[i]) return this.scores[i]??this.scores[this.scores.length-1];
-      return 'M';
-    }
+    scoreAtFrac(f){const fr=this.ringFractions;for(let i=fr.length-1;i>=0;i--)if(f<=fr[i])return this.scores[i]??this.scores[this.scores.length-1];return 'M';}
   },
   indoor:{
+    label:'WA Indoor',multiSpot:false,
     scores:['X',10,9,8,7,6,5,4,3,2,1],
     colors:{'X':'#FFD600',10:'#FFD600',9:'#FFD600',8:'#EF5350',7:'#EF5350',6:'#4FC3F7',5:'#4FC3F7',4:'#777',3:'#777',2:'#ddd',1:'#ddd','M':'transparent'},
     textColors:{'X':'#000',10:'#000',9:'#000',8:'#fff',7:'#fff',6:'#000',5:'#000',4:'#fff',3:'#fff',2:'#333',1:'#333','M':'#ff4d4d'},
     ringFractions:[1,.9,.8,.7,.6,.5,.4,.3,.2,.1,.05],
-    scoreAtFrac(f){
-      const fr=this.ringFractions;
-      for(let i=fr.length-1;i>=0;i--) if(f<=fr[i]) return this.scores[i]??this.scores[this.scores.length-1];
-      return 'M';
-    }
+    scoreAtFrac(f){const fr=this.ringFractions;for(let i=fr.length-1;i>=0;i--)if(f<=fr[i])return this.scores[i]??this.scores[this.scores.length-1];return 'M';}
   }
 };
 
-// ─── State ────────────────────────────────────────────────────────────────────
+// 3-spot face definition — shared scoring for each individual spot
+// Each spot only has X/10/9 rings (the inner three), rest is miss
+const SPOT_FACE = {
+  scores:['X',10,9],
+  colors:{'X':'#FFD600',10:'#FFD600',9:'#FFD600','M':'transparent'},
+  textColors:{'X':'#000',10:'#000',9:'#000','M':'#ff4d4d'},
+  // Fractions relative to full spot radius: X=innermost ~5%, 10=inner 50%, 9=outer 100%
+  ringFractions:[1, 0.5, 0.1],
+  scoreAtFrac(f){
+    if(f<=0.1) return 'X';
+    if(f<=0.5) return 10;
+    if(f<=1.0) return 9;
+    return 'M';
+  }
+};
+
+// Multi-spot layout definitions
+// spotOffsets: normalised positions of spot centres relative to overall bounding box centre
+// Units: fraction of half-height of the full target image
+const MULTI_SPOT_FACES = {
+  vertical3:{
+    label:'Vertical 3-spot',
+    multiSpot:true,
+    layout:'vertical',
+    spotCount:3,
+    // Spots stacked top-to-bottom; spacing ~0.38 of image height between centres
+    spotOffsets:[{x:0,y:-0.38},{x:0,y:0},{x:0,y:0.38}],
+    spotLabels:['Top','Middle','Bottom'],
+    info:'One arrow per spot. Photo the whole target face showing all 3 spots.',
+    ...SPOT_FACE
+  },
+  triangle3:{
+    label:'Triangular 3-spot',
+    multiSpot:true,
+    layout:'triangle',
+    spotCount:3,
+    // Triangle: top-centre, bottom-left, bottom-right
+    spotOffsets:[{x:0,y:-0.3},{x:-0.3,y:0.2},{x:0.3,y:0.2}],
+    spotLabels:['Top','Bottom-left','Bottom-right'],
+    info:'One arrow per spot. Photo the whole target face showing all 3 spots.',
+    ...SPOT_FACE
+  }
+};
+
+function getFace(name){return SINGLE_FACE[name]||MULTI_SPOT_FACES[name];}
+
+// ─── State ─────────────────────────────────────────────────────────────────────
 let currentFace='outdoor', arrowsPerEnd=3, numAngles=1;
-let img=null, arrows=[], ends=[];
-let tapMode=false, tapPhase='arrows';
+let img=null, ends=[];
+let tapMode=false, tapPhase='arrows', tapSpotIndex=0;
 let correctingIdx=-1, pendingScore=null;
 let photoW=0, photoH=0;
-let targetCenter=null, targetRadius=null;
 
-// Multi-angle state
-let angleImages=[];      // loaded Image objects per slot
-let angleImageDatas=[];  // raw pixel data per slot
-let angleTargets=[];     // {center,radius} per slot
-let angleArrows=[];      // [{x,y} in normalised target space] per slot
-let currentAngleView=0;  // which angle we're currently showing in canvas
+// Single-face state
+let arrows=[], targetCenter=null, targetRadius=null;
+
+// Multi-spot state: one entry per spot
+// Each: {center:{x,y}, radius, arrow:{x,y,score} or null}
+let spotStates=[];
+
+// Multi-angle
+let angleImages=[], angleImageDatas=[], angleTargets=[], currentAngleView=0;
 
 const photoCanvas=document.getElementById('photoCanvas');
 const overlayCanvas=document.getElementById('overlayCanvas');
@@ -339,7 +382,7 @@ const tapCanvas=document.getElementById('tapCanvas');
 const pCtx=photoCanvas.getContext('2d');
 const oCtx=overlayCanvas.getContext('2d');
 
-// ─── Settings ────────────────────────────────────────────────────────────────
+// ─── Face / settings ──────────────────────────────────────────────────────────
 document.getElementById('arrowCount').addEventListener('change',e=>{
   arrowsPerEnd=Math.max(1,Math.min(12,+e.target.value||3));
   e.target.value=arrowsPerEnd;
@@ -349,7 +392,34 @@ function setFace(btn){
   document.querySelectorAll('#faceSelector .pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   currentFace=btn.dataset.face;
-  clearArrows();
+  const face=getFace(currentFace);
+  const is3spot=face.multiSpot;
+
+  // Show/hide arrows input (3-spot = fixed 3 arrows, 1 per spot)
+  document.getElementById('arrowsInputWrap').style.display=is3spot?'none':'flex';
+  if(is3spot) arrowsPerEnd=3;
+
+  // Show info banner
+  const info=document.getElementById('spotInfo');
+  if(is3spot){
+    info.classList.add('visible');
+    document.getElementById('spotInfoText').textContent=face.info;
+  } else {
+    info.classList.remove('visible');
+  }
+
+  // Hide angle toggle for 3-spot (not meaningful with multiple targets)
+  document.getElementById('angleBar').style.display=is3spot?'none':'flex';
+  if(is3spot) setAnglesToOne();
+
+  resetAll();
+}
+
+function setAnglesToOne(){
+  document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.angles==='1'));
+  numAngles=1;
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('multiSlots').style.display='none';
 }
 
 function setAngles(btn){
@@ -369,36 +439,30 @@ function setAngles(btn){
 
 function buildSlots(){
   const labels=numAngles===2
-    ?[['Straight on','Front view'],['Side angle','~45° from side']]
-    :[['Straight on','Front view'],['Side angle','~45° from side'],['Top angle','~45° from above']];
-  const container=document.getElementById('photoSlots');
-  container.className=`photo-slots slots-${numAngles}`;
-  container.innerHTML=labels.map((l,i)=>`
+    ?[['Straight on','Front'],['Side angle','~45° side']]
+    :[['Straight on','Front'],['Side angle','~45° side'],['Top angle','~45° above']];
+  document.getElementById('photoSlots').className=`photo-slots slots-${numAngles}`;
+  document.getElementById('photoSlots').innerHTML=labels.map((l,i)=>`
     <div class="photo-slot" id="slot-${i}" onclick="triggerSlotInput(${i})">
       <i class="ti ti-camera" aria-hidden="true"></i>
       <div class="photo-slot-label"><strong>${l[0]}</strong><br>${l[1]}</div>
     </div>`).join('');
-  // build hidden inputs
   const hi=document.getElementById('hiddenInputs');
   hi.innerHTML='';
   for(let i=0;i<numAngles;i++){
     const inp=document.createElement('input');
-    inp.type='file'; inp.accept='image/*'; inp.capture='environment';
-    inp.id=`slotInput-${i}`;
+    inp.type='file';inp.accept='image/*';inp.capture='environment';inp.id=`slotInput-${i}`;
     inp.addEventListener('change',e=>handleFileSelect(e,i));
     hi.appendChild(inp);
   }
   angleImages=new Array(numAngles).fill(null);
   angleImageDatas=new Array(numAngles).fill(null);
   angleTargets=new Array(numAngles).fill(null);
-  angleArrows=new Array(numAngles).fill(null);
 }
 
-function triggerSlotInput(i){
-  document.getElementById(`slotInput-${i}`).click();
-}
+function triggerSlotInput(i){document.getElementById(`slotInput-${i}`).click();}
 
-// ─── Image loading ────────────────────────────────────────────────────────────
+// ─── Image loading ─────────────────────────────────────────────────────────────
 function handleFileSelect(e,slotIndex){
   const file=e.target.files[0];
   if(!file) return;
@@ -406,11 +470,8 @@ function handleFileSelect(e,slotIndex){
   reader.onload=ev=>{
     const image=new Image();
     image.onload=()=>{
-      if(numAngles===1){
-        loadSingleImage(image);
-      } else {
-        loadSlotImage(image,slotIndex);
-      }
+      if(numAngles===1) loadSingleImage(image);
+      else loadSlotImage(image,slotIndex);
     };
     image.src=ev.target.result;
   };
@@ -425,51 +486,44 @@ function loadSingleImage(image){
   document.getElementById('uploadZone').style.display='none';
   document.getElementById('cameraArea').style.display='block';
   document.getElementById('angleProgress').style.display='none';
-  arrows=[]; targetCenter=null; targetRadius=null;
+  arrows=[]; spotStates=[]; targetCenter=null; targetRadius=null;
   renderOverlay();
-  setStatus('info','Photo loaded — tap Detect arrows or add manually');
+  const face=getFace(currentFace);
+  setStatus('info',face.multiSpot?'Photo loaded — tap Detect to find all 3 spots':'Photo loaded — tap Detect arrows or add manually');
   updateSaveBtn(); updateArrowChips();
 }
 
 function loadSlotImage(image,i){
   angleImages[i]=image;
-  // Extract pixel data immediately
   const tmp=document.createElement('canvas');
-  tmp.width=image.width; tmp.height=image.height;
+  tmp.width=image.width;tmp.height=image.height;
   tmp.getContext('2d').drawImage(image,0,0);
-  angleImageDatas[i]=tmp.getContext('2d').getImageData(0,0,image.width,image.height);
-  angleImageDatas[i]._w=image.width;
-  angleImageDatas[i]._h=image.height;
-
-  // Update slot UI
+  const d=tmp.getContext('2d').getImageData(0,0,image.width,image.height);
+  d._w=image.width;d._h=image.height;
+  angleImageDatas[i]=d;
   const slot=document.getElementById(`slot-${i}`);
-  const thumb=document.createElement('img');
-  thumb.src=image.src; thumb.className='slot-thumb';
-  // clear and rebuild slot
   slot.innerHTML='';
+  const thumb=document.createElement('img');
+  thumb.src=image.src;thumb.className='slot-thumb';
   slot.appendChild(thumb);
   const badge=document.createElement('div');
-  badge.className='slot-badge'; badge.textContent='✓';
+  badge.className='slot-badge';badge.textContent='✓';
   slot.appendChild(badge);
-  const lbl=document.createElement('div');
-  lbl.className='photo-slot-label';
-  lbl.style.cssText='position:relative;color:#c8ff00;font-size:11px;text-align:center;margin-top:auto;padding:4px';
-  lbl.textContent=['Front','Side','Top'][i];
-  slot.appendChild(lbl);
   slot.classList.add('filled');
-
   const filled=angleImages.filter(Boolean).length;
   document.getElementById('processMultiBtn').style.display=filled===numAngles?'flex':'none';
 }
 
 function resizeCanvases(w,h){
-  photoCanvas.width=w; photoCanvas.height=h;
-  overlayCanvas.width=w; overlayCanvas.height=h;
-  tapCanvas.width=w; tapCanvas.height=h;
+  photoCanvas.width=w;photoCanvas.height=h;
+  overlayCanvas.width=w;overlayCanvas.height=h;
+  tapCanvas.width=w;tapCanvas.height=h;
 }
 
 function newPhoto(){
   document.getElementById('cameraArea').style.display='none';
+  document.getElementById('triResult').style.display='none';
+  document.getElementById('angleProgress').style.display='none';
   if(numAngles===1){
     document.getElementById('uploadZone').style.display='block';
     document.getElementById('fileInput').value='';
@@ -477,17 +531,12 @@ function newPhoto(){
     document.getElementById('multiSlots').style.display='block';
     buildSlots();
   }
-  arrows=[]; img=null; tapMode=false;
-  targetCenter=null; targetRadius=null;
-  currentAngleView=0;
-  document.getElementById('triResult').style.display='none';
-  updateSaveBtn(); updateArrowChips();
+  arrows=[];spotStates=[];img=null;tapMode=false;
+  targetCenter=null;targetRadius=null;currentAngleView=0;
+  updateSaveBtn();updateArrowChips();
 }
 
-function resetAll(){
-  newPhoto();
-  document.getElementById('cameraArea').style.display='none';
-}
+function resetAll(){newPhoto();}
 
 // ─── Status ───────────────────────────────────────────────────────────────────
 function setStatus(type,msg){
@@ -500,33 +549,47 @@ function setStatus(type,msg){
 // ─── Pixel helpers ────────────────────────────────────────────────────────────
 function getImgData(image){
   const tmp=document.createElement('canvas');
-  tmp.width=image.width; tmp.height=image.height;
+  tmp.width=image.width;tmp.height=image.height;
   tmp.getContext('2d').drawImage(image,0,0);
   const d=tmp.getContext('2d').getImageData(0,0,image.width,image.height);
-  d._w=image.width; d._h=image.height;
+  d._w=image.width;d._h=image.height;
   return d;
 }
 
 function rgbAt(data,x,y){
   const w=data._w||photoW;
   const i=(y*w+x)*4;
-  return [data.data[i],data.data[i+1],data.data[i+2]];
+  return[data.data[i],data.data[i+1],data.data[i+2]];
 }
 
-function isYellow(r,g,b){return r>155&&g>125&&b<110&&r>(b+75)&&g>(b+35)}
-function isDark(r,g,b){return(r+g+b)/3<80&&(Math.max(r,g,b)-Math.min(r,g,b))<55}
+function isYellow(r,g,b){return r>155&&g>125&&b<110&&r>(b+75)&&g>(b+35);}
+function isDark(r,g,b){return(r+g+b)/3<80&&(Math.max(r,g,b)-Math.min(r,g,b))<55;}
 
-// ─── Target detection (works on any ImageData) ───────────────────────────────
-function findGoldCentroid(data){
+// ─── Target detection helpers ─────────────────────────────────────────────────
+function findAllGoldCentroids(data){
+  // Returns all gold blobs as separate centroids using simple flood-fill style clustering
   const w=data._w||photoW, h=data._h||photoH;
-  let sx=0,sy=0,n=0;
-  const step=3;
+  const step=4;
+  const goldPts=[];
   for(let y=0;y<h;y+=step) for(let x=0;x<w;x+=step){
     const[r,g,b]=rgbAt(data,x,y);
-    if(isYellow(r,g,b)){sx+=x;sy+=y;n++;}
+    if(isYellow(r,g,b)) goldPts.push({x,y});
   }
-  if(n<40) return null;
-  return{x:Math.round(sx/n),y:Math.round(sy/n),count:n};
+  if(goldPts.length<10) return[];
+  // Cluster with large epsilon to separate individual spot gold zones
+  const eps=Math.min(w,h)*0.08;
+  return clusterPoints(goldPts,eps)
+    .filter(c=>c.length>=8)
+    .map(c=>({
+      x:Math.round(c.reduce((s,p)=>s+p.x,0)/c.length),
+      y:Math.round(c.reduce((s,p)=>s+p.y,0)/c.length),
+      size:c.length
+    }));
+}
+
+function findGoldCentroid(data){
+  const all=findAllGoldCentroids(data);
+  return all.length>0?all.reduce((best,c)=>c.size>best.size?c:best,all[0]):null;
 }
 
 function estimateGoldRadius(data,cx,cy){
@@ -545,83 +608,50 @@ function estimateGoldRadius(data,cx,cy){
   return samples>0?Math.round(total/samples):0;
 }
 
-// ─── Ellipse fitting (for perspective recovery) ───────────────────────────────
-// Collect all gold pixels, fit a bounding ellipse, return {cx,cy,a,b,angle}
-// a=semi-major, b=semi-minor, angle=rotation of major axis in radians
 function fitGoldEllipse(data){
   const w=data._w||photoW, h=data._h||photoH;
-  const pts=[];
-  const step=4;
+  const pts=[];const step=4;
   for(let y=0;y<h;y+=step) for(let x=0;x<w;x+=step){
     const[r,g,b]=rgbAt(data,x,y);
     if(isYellow(r,g,b)) pts.push([x,y]);
   }
   if(pts.length<20) return null;
-  // Centroid
   let mx=0,my=0;
   pts.forEach(([x,y])=>{mx+=x;my+=y;});
-  mx/=pts.length; my/=pts.length;
-  // Covariance
+  mx/=pts.length;my/=pts.length;
   let Cxx=0,Cyy=0,Cxy=0;
-  pts.forEach(([x,y])=>{
-    const dx=x-mx,dy=y-my;
-    Cxx+=dx*dx; Cyy+=dy*dy; Cxy+=dx*dy;
-  });
-  Cxx/=pts.length; Cyy/=pts.length; Cxy/=pts.length;
-  // Eigenvalues of covariance = squared semi-axes
-  const tr=Cxx+Cyy, det=Cxx*Cyy-Cxy*Cxy;
+  pts.forEach(([x,y])=>{const dx=x-mx,dy=y-my;Cxx+=dx*dx;Cyy+=dy*dy;Cxy+=dx*dy;});
+  Cxx/=pts.length;Cyy/=pts.length;Cxy/=pts.length;
+  const tr=Cxx+Cyy,det=Cxx*Cyy-Cxy*Cxy;
   const disc=Math.sqrt(Math.max(0,(tr*tr/4)-det));
-  const l1=tr/2+disc, l2=tr/2-disc;
-  const a=Math.sqrt(Math.max(0,l1))*2;  // semi-major (x2 for full axis)
-  const b=Math.sqrt(Math.max(0,l2))*2;  // semi-minor
-  const angle=Math.atan2(2*Cxy,Cxx-Cyy)/2; // major axis angle
-  return{cx:mx,cy:my,a,b,angle};
+  const l1=tr/2+disc,l2=tr/2-disc;
+  return{cx:mx,cy:my,a:Math.sqrt(Math.max(0,l1))*2,b:Math.sqrt(Math.max(0,l2))*2,angle:Math.atan2(2*Cxy,Cxx-Cyy)/2};
 }
 
-// Given an ellipse fitting of the gold zone, recover the perspective transform
-// Returns a function: (px,py) => (normX,normY) in flat-target space [-1..1]
-// Flat target: gold zone radius = goldFrac * targetRadius = 1.0 in normalised space
 function buildPerspectiveTransform(ellipse,goldFrac){
   if(!ellipse||ellipse.b<4) return null;
-  // The gold circle has true radius R. Viewed at tilt angle theta along some axis:
-  // semi-major a = R (no compression along perpendicular to tilt axis)
-  // semi-minor b = R * cos(theta)
-  // So cos(theta) = b/a, theta = acos(b/a)
   const cosTheta=Math.min(1,ellipse.b/ellipse.a);
-  const sinTheta=Math.sqrt(1-cosTheta*cosTheta);
-  const tiltAxis=ellipse.angle; // direction perpendicular to the tilt
-  // Scale factors: along major axis pixels map 1:1 to target coords
-  // along minor axis pixels are compressed by cosTheta
-  const scaleAlong=1; // normalise so gold radius = 1
   const scalePerp=1/Math.max(0.1,cosTheta);
-  const R=ellipse.a; // pixel radius of gold zone semi-major
-  const trueR=R/goldFrac; // pixel radius of full target (in this image's perspective)
-
+  const R=ellipse.a;
+  const tiltAxis=ellipse.angle;
   return function(px,py){
-    // Translate to ellipse centre
-    let dx=px-ellipse.cx, dy=py-ellipse.cy;
-    // Rotate to align with ellipse axes
-    const cos=Math.cos(-tiltAxis), sin=Math.sin(-tiltAxis);
-    const rx=dx*cos-dy*sin;
-    const ry=dx*sin+dy*cos;
-    // Correct perspective compression along minor axis
-    const fx=rx/R;
-    const fy=(ry/R)*scalePerp;
-    return{x:fx,y:fy}; // normalised: 0,0=centre; ~1=gold edge; goldFrac=gold boundary
+    let dx=px-ellipse.cx,dy=py-ellipse.cy;
+    const cos=Math.cos(-tiltAxis),sin=Math.sin(-tiltAxis);
+    const rx=dx*cos-dy*sin,ry=dx*sin+dy*cos;
+    return{x:rx/R,y:(ry/R)*scalePerp};
   };
 }
 
-// ─── Arrow detection ──────────────────────────────────────────────────────────
+// ─── Clustering ───────────────────────────────────────────────────────────────
 function clusterPoints(pts,eps){
   const visited=new Uint8Array(pts.length);
   const clusters=[];
   for(let i=0;i<pts.length;i++){
     if(visited[i]) continue;
     visited[i]=1;
-    const cluster=[pts[i]];
-    const queue=[i];
+    const cluster=[pts[i]],queue=[i];
     while(queue.length){
-      const ci=queue.shift(), cp=pts[ci];
+      const ci=queue.shift(),cp=pts[ci];
       for(let j=0;j<pts.length;j++){
         if(visited[j]) continue;
         const dx=pts[j].x-cp.x,dy=pts[j].y-cp.y;
@@ -633,250 +663,172 @@ function clusterPoints(pts,eps){
   return clusters.sort((a,b)=>b.length-a.length);
 }
 
-function centroid(cluster){
-  return{
-    x:Math.round(cluster.reduce((s,p)=>s+p.x,0)/cluster.length),
-    y:Math.round(cluster.reduce((s,p)=>s+p.y,0)/cluster.length)
-  };
+function centroid(c){
+  return{x:Math.round(c.reduce((s,p)=>s+p.x,0)/c.length),y:Math.round(c.reduce((s,p)=>s+p.y,0)/c.length)};
 }
 
 function findDarkClusters(data,cx,cy,r){
   const w=data._w||photoW, h=data._h||photoH;
-  const pts=[];
-  const margin=r*1.05;
-  const step=2;
-  const x0=Math.max(0,Math.round(cx-margin)), x1=Math.min(w,Math.round(cx+margin));
-  const y0=Math.max(0,Math.round(cy-margin)), y1=Math.min(h,Math.round(cy+margin));
+  const pts=[];const step=2;const margin=r*1.05;
+  const x0=Math.max(0,Math.round(cx-margin)),x1=Math.min(w,Math.round(cx+margin));
+  const y0=Math.max(0,Math.round(cy-margin)),y1=Math.min(h,Math.round(cy+margin));
   for(let y=y0;y<y1;y+=step) for(let x=x0;x<x1;x+=step){
     const dx=x-cx,dy=y-cy;
     if(dx*dx+dy*dy>margin*margin) continue;
-    const[r2,g,b]=rgbAt(data,x,y);
-    if(isDark(r2,g,b)) pts.push({x,y});
+    const[rv,g,b]=rgbAt(data,x,y);
+    if(isDark(rv,g,b)) pts.push({x,y});
   }
-  if(pts.length<10) return[];
+  if(pts.length<8) return[];
   const eps=Math.max(10,Math.round(r*0.05));
   return clusterPoints(pts,eps);
 }
 
-// ─── Single-image detection flow ──────────────────────────────────────────────
+// ─── Score calculation ────────────────────────────────────────────────────────
+function calcScore(x,y,cx,cy,r,faceName){
+  if(!cx||!r) return '?';
+  const dx=x-cx,dy=y-cy;
+  const frac=Math.sqrt(dx*dx+dy*dy)/r;
+  return getFace(faceName||currentFace).scoreAtFrac(frac);
+}
+function scoreValue(s){if(s==='M')return 0;if(s==='X')return 10;return+s;}
+
+// ─── Main detection entry ─────────────────────────────────────────────────────
 function runDetection(){
   if(!img) return;
-  arrows=[]; tapMode=false; tapCanvas.style.cursor='default';
+  const face=getFace(currentFace);
+  if(face.multiSpot) runDetection3Spot();
+  else runDetectionSingle();
+}
+
+// ─── Single-face detection ────────────────────────────────────────────────────
+function runDetectionSingle(){
+  arrows=[];tapMode=false;tapCanvas.style.cursor='default';
   setStatus('info','Scanning for target...');
   setTimeout(()=>{
     const data=getImgData(img);
-    data._w=img.width; data._h=img.height;
     const gc=findGoldCentroid(data);
     if(!gc){setStatus('warn','Gold zone not found — switching to tap mode');enterTapMode(false,true);return;}
     const gr=estimateGoldRadius(data,gc.x,gc.y);
     if(gr<8){setStatus('warn','Target too small — switching to tap mode');enterTapMode(false,true);return;}
     targetCenter=gc;
-    const face=FACES[currentFace];
+    const face=getFace(currentFace);
     const goldFrac=face.ringFractions[face.ringFractions.length-2];
     targetRadius=Math.round(gr/goldFrac);
     setStatus('info','Target found — scanning for arrows...');
     renderOverlay();
-    setTimeout(()=>detectArrowsSingle(data),50);
+    setTimeout(()=>{
+      const clusters=findDarkClusters(data,gc.x,gc.y,targetRadius);
+      const minSize=Math.max(5,10);
+      const good=clusters.filter(c=>c.length>=minSize);
+      if(!good.length){
+        setStatus('warn','No arrow shafts detected — tap arrows manually');
+        enterTapMode(true,false);return;
+      }
+      arrows=good.slice(0,arrowsPerEnd).map(c=>{
+        const ct=centroid(c);
+        return{x:ct.x,y:ct.y,score:calcScore(ct.x,ct.y,targetCenter.x,targetCenter.y,targetRadius)};
+      });
+      renderOverlay();updateArrowChips();updateSaveBtn();
+      if(arrows.length<arrowsPerEnd){
+        setStatus('warn',`Found ${arrows.length}/${arrowsPerEnd} — tap to add missing`);
+        enterTapMode(true,false);
+      } else {
+        setStatus('ok',`${arrows.length} arrows detected — tap any to correct`);
+      }
+    },50);
   },50);
 }
 
-function detectArrowsSingle(data){
-  const cx=targetCenter.x,cy=targetCenter.y,r=targetRadius;
-  const clusters=findDarkClusters(data,cx,cy,r);
-  const minSize=Math.max(5,Math.round(10/(arrowsPerEnd||3)));
-  const good=clusters.filter(c=>c.length>=minSize);
-  if(good.length===0){
-    setStatus('warn','No arrow shafts detected — tap arrows manually');
-    enterTapMode(true,false); return;
-  }
-  arrows=good.slice(0,arrowsPerEnd).map(c=>{
-    const ct=centroid(c);
-    return{x:ct.x,y:ct.y,score:calcScore(ct.x,ct.y)};
-  });
-  renderOverlay(); updateArrowChips(); updateSaveBtn();
-  if(arrows.length<arrowsPerEnd){
-    setStatus('warn',`Found ${arrows.length}/${arrowsPerEnd} — tap to add missing`);
-    enterTapMode(true,false);
-  } else {
-    setStatus('ok',`${arrows.length} arrows detected — tap any to correct`);
-  }
-}
+// ─── 3-spot detection ─────────────────────────────────────────────────────────
+function runDetection3Spot(){
+  spotStates=[];tapMode=false;tapCanvas.style.cursor='default';
+  setStatus('info','Scanning for 3 spot targets...');
+  setTimeout(()=>{
+    const data=getImgData(img);
+    const face=getFace(currentFace);
 
-// ─── Multi-angle triangulation ────────────────────────────────────────────────
-function processMultiAngle(){
-  setStatus('info','Detecting targets in each photo...');
-  document.getElementById('multiSlots').style.display='none';
-  document.getElementById('cameraArea').style.display='block';
-  document.getElementById('angleProgress').style.display='flex';
-
-  // Show first image in canvas as reference
-  const refImg=angleImages[0];
-  photoW=refImg.width; photoH=refImg.height;
-  resizeCanvases(photoW,photoH);
-  pCtx.drawImage(refImg,0,0);
-  currentAngleView=0;
-
-  updateAngleProgress(-1);
-  setTimeout(()=>detectAllAngles(),80);
-}
-
-function updateAngleProgress(currentStep){
-  const labels=['Front','Side','Top'].slice(0,numAngles);
-  document.getElementById('angleProgress').innerHTML=labels.map((l,i)=>{
-    let cls='angle-step';
-    if(i<currentStep) cls+=' done';
-    else if(i===currentStep) cls+=' current';
-    return`<div class="${cls}"><span class="step-name">${i<currentStep?'✓ ':i===currentStep?'⟳ ':''}${l}</span><span class="step-sub">${i<currentStep?'Found':'...'}</span></div>`;
-  }).join('');
-}
-
-function detectAllAngles(){
-  const face=FACES[currentFace];
-  const goldFrac=face.ringFractions[face.ringFractions.length-2];
-  const results=[]; // per angle: {transform, arrowsNorm}
-
-  for(let i=0;i<numAngles;i++){
-    updateAngleProgress(i);
-    const data=angleImageDatas[i];
-    const w=data._w, h=data._h;
-
-    // Fit ellipse to gold zone for perspective recovery
-    const ellipse=fitGoldEllipse(data);
-    if(!ellipse){
-      setStatus('warn',`Photo ${i+1}: gold zone not found — falling back to tap mode`);
-      // Use first image, tap mode
-      showFirstImageAndTap();
-      return;
+    // Find all gold blobs
+    const centroids=findAllGoldCentroids(data);
+    if(centroids.length<1){
+      setStatus('warn','No gold zones found — tap to place spot centres manually');
+      enter3SpotTapMode(true);return;
     }
 
-    const goldR=ellipse.a; // semi-major = gold zone radius in pixels
-    const targetR=goldR/goldFrac;
-    angleTargets[i]={center:{x:ellipse.cx,y:ellipse.cy},radius:targetR,ellipse};
+    // We expect exactly 3 spots; take the 3 largest gold blobs
+    const spots=centroids.slice(0,3);
 
-    // Build perspective transform for this angle
-    const transform=buildPerspectiveTransform(ellipse,goldFrac);
-    if(!transform){
-      setStatus('warn',`Photo ${i+1}: perspective recovery failed — falling back`);
-      showFirstImageAndTap(); return;
-    }
+    // Sort spots based on layout
+    const sorted=sortSpots(spots,face.layout);
 
-    // Detect arrows in this angle
-    const clusters=findDarkClusters(data,ellipse.cx,ellipse.cy,targetR);
-    const minSize=Math.max(4,8);
-    const good=clusters.filter(c=>c.length>=minSize).slice(0,arrowsPerEnd);
-
-    if(good.length===0){
-      // No arrows in this angle — skip it
-      results.push({transform,arrowsNorm:[]});
-      continue;
-    }
-
-    const arrowsNorm=good.map(c=>{
-      const ct=centroid(c);
-      return transform(ct.x,ct.y);
+    // Estimate radius for each spot from its gold radius
+    const goldFrac=SPOT_FACE.ringFractions[1]; // 10-ring fraction = 0.5 of spot radius
+    spotStates=sorted.map((s,i)=>{
+      const gr=estimateGoldRadius(data,s.x,s.y);
+      const spotR=gr>4?Math.round(gr/goldFrac):Math.round(Math.min(photoW,photoH)*0.12);
+      return{center:{x:s.x,y:s.y},radius:spotR,arrow:null,label:face.spotLabels[i]};
     });
-    results.push({transform,arrowsNorm});
-  }
 
-  updateAngleProgress(numAngles); // all done
+    setStatus('info',`Found ${spotStates.length} spots — scanning for arrows...`);
+    renderOverlay();
 
-  // Triangulate: average normalised positions across angles
-  // Match arrows across angles by proximity in normalised space
-  triangulateArrows(results);
-}
+    setTimeout(()=>{
+      // For each spot, find the nearest dark cluster
+      spotStates.forEach((spot,i)=>{
+        const clusters=findDarkClusters(data,spot.center.x,spot.center.y,spot.radius*1.2);
+        if(clusters.length>0){
+          const ct=centroid(clusters[0]);
+          spot.arrow={x:ct.x,y:ct.y,score:calcScore(ct.x,ct.y,spot.center.x,spot.center.y,spot.radius)};
+        }
+      });
 
-function triangulateArrows(results){
-  // Collect all detected arrow positions in normalised space
-  const allNorm=results.flatMap(r=>r.arrowsNorm);
-  if(allNorm.length===0){
-    setStatus('warn','No arrows detected in any angle — switching to tap mode');
-    showFirstImageAndTap(); return;
-  }
+      renderOverlay();updateArrowChips();updateSaveBtn();
 
-  // Cluster the normalised positions — arrows from different angles should cluster together
-  const eps=0.18; // normalised units
-  const normPts=allNorm.map((p,i)=>({x:p.x,y:p.y,_orig:p}));
-  const clusters=clusterPoints(normPts,eps);
-
-  // Each cluster = one physical arrow; centroid = best estimate of true position
-  const finalArrows=clusters.slice(0,arrowsPerEnd).map(c=>{
-    const nx=c.reduce((s,p)=>s+p.x,0)/c.length;
-    const ny=c.reduce((s,p)=>s+p.y,0)/c.length;
-    const frac=Math.sqrt(nx*nx+ny*ny);
-    const score=FACES[currentFace].scoreAtFrac(frac);
-    const confidence=c.length; // how many angles agreed
-    return{normX:nx,normY:ny,frac,score,confidence};
-  });
-
-  // Map back to pixel space using the first (front) image
-  const ref=angleTargets[0];
-  targetCenter=ref.center;
-  targetRadius=ref.radius;
-
-  arrows=finalArrows.map(a=>{
-    // Map normalised coords back to pixel space in front image
-    // normX,normY are in units where gold-edge=goldFrac
-    const face=FACES[currentFace];
-    const goldFrac=face.ringFractions[face.ringFractions.length-2];
-    // Undo perspective for front image (angle≈0, so basically direct mapping)
-    const px=Math.round(targetCenter.x+a.normX*targetRadius);
-    const py=Math.round(targetCenter.y+a.normY*targetRadius);
-    return{x:px,y:py,score:a.score,confidence:a.confidence};
-  });
-
-  // Show result info
-  const avgConf=(arrows.reduce((s,a)=>s+a.confidence,0)/Math.max(1,arrows.length)).toFixed(1);
-  const tri=document.getElementById('triResult');
-  tri.style.display='block';
-  tri.innerHTML=`<i class="ti ti-chart-dots" style="margin-right:6px" aria-hidden="true"></i>
-    Triangulated from ${numAngles} angles — avg ${avgConf}/${numAngles} views per arrow
-    ${arrows.length<arrowsPerEnd?` · <span style="color:var(--warn)">${arrowsPerEnd-arrows.length} arrows not found — tap to add</span>`:''}`;
-
-  renderOverlay(); updateArrowChips(); updateSaveBtn();
-
-  if(arrows.length<arrowsPerEnd){
-    setStatus('warn',`Found ${arrows.length}/${arrowsPerEnd} arrows — tap to add the rest`);
-    enterTapMode(true,false);
-  } else {
-    setStatus('ok',`${arrows.length} arrows scored from ${numAngles} angles — tap any to correct`);
-  }
-}
-
-function showFirstImageAndTap(){
-  const refImg=angleImages[0];
-  if(refImg){
-    photoW=refImg.width; photoH=refImg.height;
-    resizeCanvases(photoW,photoH);
-    pCtx.drawImage(refImg,0,0);
-    // Try to at least get a target
-    const data=angleImageDatas[0];
-    const gc=findGoldCentroid(data);
-    if(gc){
-      const gr=estimateGoldRadius(data,gc.x,gc.y);
-      if(gr>8){
-        targetCenter=gc;
-        const face=FACES[currentFace];
-        targetRadius=Math.round(gr/face.ringFractions[face.ringFractions.length-2]);
-        renderOverlay();
+      const found=spotStates.filter(s=>s.arrow).length;
+      if(found<3){
+        setStatus('warn',`Found ${found}/3 arrows — tap missing spots to add`);
+        enter3SpotTapMode(false);
+      } else {
+        setStatus('ok','All 3 arrows detected — tap any to correct');
       }
-    }
+    },50);
+  },50);
+}
+
+function sortSpots(spots,layout){
+  if(layout==='vertical'){
+    // Sort top to bottom by y
+    return [...spots].sort((a,b)=>a.y-b.y).slice(0,3);
+  } else {
+    // Triangle: topmost first, then left-right for the bottom two
+    const sorted=[...spots].sort((a,b)=>a.y-b.y);
+    const top=sorted[0];
+    const bottom=[...sorted.slice(1)].sort((a,b)=>a.x-b.x);
+    return[top,...bottom].slice(0,3);
   }
-  document.getElementById('angleProgress').style.display='none';
-  enterTapMode(false,!targetCenter);
 }
 
-// ─── Score calculation ────────────────────────────────────────────────────────
-function calcScore(x,y){
-  if(!targetCenter||!targetRadius) return '?';
-  const dx=x-targetCenter.x,dy=y-targetCenter.y;
-  return FACES[currentFace].scoreAtFrac(Math.sqrt(dx*dx+dy*dy)/targetRadius);
+// ─── 3-spot tap mode ──────────────────────────────────────────────────────────
+function enter3SpotTapMode(needCenters){
+  tapMode=true;tapCanvas.style.cursor='crosshair';
+  const face=getFace(currentFace);
+  if(needCenters||spotStates.length===0){
+    // Initialise empty spot states
+    spotStates=face.spotLabels.map(l=>({center:null,radius:null,arrow:null,label:l}));
+    tapPhase='spotCenters';tapSpotIndex=0;
+    setStatus('info',`Tap the centre of the ${face.spotLabels[0]} spot`);
+  } else {
+    // Find first spot missing an arrow
+    tapPhase='spotArrows';
+    tapSpotIndex=spotStates.findIndex(s=>!s.arrow);
+    if(tapSpotIndex<0){tapMode=false;tapCanvas.style.cursor='default';return;}
+    setStatus('info',`Tap the arrow on the ${spotStates[tapSpotIndex].label} spot`);
+  }
 }
-function scoreValue(s){if(s==='M')return 0;if(s==='X')return 10;return+s;}
 
-// ─── Tap mode ─────────────────────────────────────────────────────────────────
+// ─── Single-face tap mode ─────────────────────────────────────────────────────
 function enterTapMode(additive,needCenter){
   if(!additive) arrows=[];
-  tapMode=true; tapCanvas.style.cursor='crosshair';
+  tapMode=true;tapCanvas.style.cursor='crosshair';
   if(needCenter||!targetCenter){
     tapPhase='center';
     setStatus('info','Tap the centre of the gold zone first');
@@ -884,31 +836,72 @@ function enterTapMode(additive,needCenter){
     tapPhase='arrows';
     setStatus('info',`Tap each arrow — ${arrowsPerEnd-arrows.length} remaining`);
   }
-  renderOverlay(); updateArrowChips(); updateSaveBtn();
+  renderOverlay();updateArrowChips();updateSaveBtn();
 }
 
+// ─── Unified tap handler ──────────────────────────────────────────────────────
 function handleTap(e){
   if(!tapMode) return;
   const rect=tapCanvas.getBoundingClientRect();
-  const sx=tapCanvas.width/rect.width, sy=tapCanvas.height/rect.height;
+  const sx=tapCanvas.width/rect.width,sy=tapCanvas.height/rect.height;
   const tx=e.touches?e.touches[0].clientX:e.clientX;
   const ty=e.touches?e.touches[0].clientY:e.clientY;
-  const x=Math.round((tx-rect.left)*sx), y=Math.round((ty-rect.top)*sy);
+  const x=Math.round((tx-rect.left)*sx),y=Math.round((ty-rect.top)*sy);
+  const face=getFace(currentFace);
 
+  if(face.multiSpot){
+    handle3SpotTap(x,y,face);
+  } else {
+    handleSingleTap(x,y);
+  }
+}
+
+function handleSingleTap(x,y){
   if(tapPhase==='center'){
     targetCenter={x,y};
     targetRadius=Math.round(Math.min(photoW,photoH)*0.4);
-    tapPhase='arrows';
-    renderOverlay();
-    setStatus('info',`Centre set — tap ${arrowsPerEnd} arrows`);
-    return;
+    tapPhase='arrows';renderOverlay();
+    setStatus('info',`Centre set — tap ${arrowsPerEnd} arrows`);return;
   }
   if(arrows.length>=arrowsPerEnd) return;
-  arrows.push({x,y,score:calcScore(x,y)});
-  renderOverlay(); updateArrowChips(); updateSaveBtn();
+  arrows.push({x,y,score:calcScore(x,y,targetCenter.x,targetCenter.y,targetRadius)});
+  renderOverlay();updateArrowChips();updateSaveBtn();
   const rem=arrowsPerEnd-arrows.length;
   if(rem>0) setStatus('info',`${rem} arrow${rem===1?'':'s'} remaining`);
   else{tapMode=false;tapCanvas.style.cursor='default';setStatus('ok','All placed — save end or tap any to correct');}
+}
+
+function handle3SpotTap(x,y,face){
+  if(tapPhase==='spotCenters'){
+    const spot=spotStates[tapSpotIndex];
+    spot.center={x,y};
+    spot.radius=Math.round(Math.min(photoW,photoH)*0.13);
+    tapSpotIndex++;
+    renderOverlay();
+    if(tapSpotIndex<spotStates.length){
+      setStatus('info',`Tap the centre of the ${spotStates[tapSpotIndex].label} spot`);
+    } else {
+      tapPhase='spotArrows';tapSpotIndex=0;
+      setStatus('info',`Now tap the arrow on the ${spotStates[0].label} spot`);
+    }
+    return;
+  }
+  if(tapPhase==='spotArrows'){
+    const spot=spotStates[tapSpotIndex];
+    if(!spot) return;
+    spot.arrow={x,y,score:calcScore(x,y,spot.center.x,spot.center.y,spot.radius)};
+    tapSpotIndex++;
+    renderOverlay();updateArrowChips();updateSaveBtn();
+    // Find next missing arrow
+    const nextMissing=spotStates.findIndex((s,i)=>i>=tapSpotIndex&&!s.arrow);
+    if(nextMissing>=0){
+      tapSpotIndex=nextMissing;
+      setStatus('info',`Tap the arrow on the ${spotStates[tapSpotIndex].label} spot`);
+    } else {
+      tapMode=false;tapCanvas.style.cursor='default';
+      setStatus('ok','All spots scored — save end or tap any to correct');
+    }
+  }
 }
 
 tapCanvas.addEventListener('touchstart',e=>{e.preventDefault();handleTap(e);},{passive:false});
@@ -916,69 +909,114 @@ tapCanvas.addEventListener('touchstart',e=>{e.preventDefault();handleTap(e);},{p
 // ─── Overlay rendering ────────────────────────────────────────────────────────
 function renderOverlay(){
   oCtx.clearRect(0,0,photoCanvas.width,photoCanvas.height);
-  if(!targetCenter||!targetRadius) return;
-  const face=FACES[currentFace];
-  const{x:cx,y:cy}=targetCenter, r=targetRadius;
+  const face=getFace(currentFace);
+  if(face.multiSpot) renderOverlay3Spot(face);
+  else renderOverlaySingle(face);
+}
 
-  oCtx.save();
-  oCtx.globalAlpha=0.2;
+function renderOverlaySingle(face){
+  if(!targetCenter||!targetRadius) return;
+  const{x:cx,y:cy}=targetCenter,r=targetRadius;
+  oCtx.save();oCtx.globalAlpha=0.2;
   face.ringFractions.forEach((frac,i)=>{
-    const col=face.colors[face.scores[i]]||'#888';
     oCtx.beginPath();oCtx.arc(cx,cy,r*frac,0,Math.PI*2);
-    oCtx.fillStyle=col;oCtx.fill();
+    oCtx.fillStyle=face.colors[face.scores[i]]||'#888';oCtx.fill();
   });
   oCtx.restore();
-
   face.ringFractions.forEach(frac=>{
     oCtx.beginPath();oCtx.arc(cx,cy,r*frac,0,Math.PI*2);
-    oCtx.strokeStyle='rgba(255,255,255,0.4)';
-    oCtx.lineWidth=Math.max(1,r*0.004);oCtx.stroke();
+    oCtx.strokeStyle='rgba(255,255,255,0.4)';oCtx.lineWidth=Math.max(1,r*0.004);oCtx.stroke();
   });
+  drawArrowMarkers(arrows,Math.max(10,r*0.028),numAngles);
+}
 
-  const ar=Math.max(10,r*0.028);
+function renderOverlay3Spot(face){
+  spotStates.forEach((spot,i)=>{
+    if(!spot.center) return;
+    const{x:cx,y:cy}=spot.center,r=spot.radius||Math.round(Math.min(photoW,photoH)*0.13);
+    // Rings
+    oCtx.save();oCtx.globalAlpha=0.2;
+    SPOT_FACE.ringFractions.forEach((frac,ri)=>{
+      oCtx.beginPath();oCtx.arc(cx,cy,r*frac,0,Math.PI*2);
+      oCtx.fillStyle=SPOT_FACE.colors[SPOT_FACE.scores[ri]]||'#888';oCtx.fill();
+    });
+    oCtx.restore();
+    SPOT_FACE.ringFractions.forEach(frac=>{
+      oCtx.beginPath();oCtx.arc(cx,cy,r*frac,0,Math.PI*2);
+      oCtx.strokeStyle='rgba(255,255,255,0.4)';oCtx.lineWidth=Math.max(1,r*0.004);oCtx.stroke();
+    });
+    // Spot label
+    oCtx.fillStyle='rgba(255,255,255,0.6)';
+    oCtx.font=`500 ${Math.max(11,Math.round(r*0.18))}px DM Sans,sans-serif`;
+    oCtx.textAlign='center';oCtx.textBaseline='bottom';
+    oCtx.fillText(spot.label,cx,cy-r-4);
+    // Arrow marker
+    if(spot.arrow) drawArrowMarkers([spot.arrow],Math.max(10,r*0.12),1);
+  });
+}
+
+function drawArrowMarkers(arrowList,ar,angles){
   const fs=Math.max(10,Math.round(ar*1.05));
-  arrows.forEach(a=>{
+  arrowList.forEach(a=>{
     oCtx.save();
     oCtx.shadowColor='rgba(0,0,0,0.6)';oCtx.shadowBlur=6;
     oCtx.beginPath();oCtx.arc(a.x,a.y,ar,0,Math.PI*2);
     oCtx.fillStyle='rgba(255,60,60,0.92)';oCtx.fill();
     oCtx.restore();
     oCtx.beginPath();oCtx.arc(a.x,a.y,ar,0,Math.PI*2);
-    oCtx.strokeStyle='#fff';oCtx.lineWidth=Math.max(1.5,r*0.004);oCtx.stroke();
+    oCtx.strokeStyle='#fff';oCtx.lineWidth=Math.max(1.5,ar*0.15);oCtx.stroke();
     oCtx.fillStyle='#fff';
     oCtx.font=`600 ${fs}px DM Sans,sans-serif`;
     oCtx.textAlign='center';oCtx.textBaseline='middle';
     oCtx.fillText(String(a.score),a.x,a.y);
-    // Show confidence indicator for multi-angle
-    if(a.confidence&&numAngles>1){
-      oCtx.fillStyle=a.confidence>=numAngles?'#4dff91':'#ffc800';
+    if(a.confidence&&angles>1){
+      oCtx.fillStyle=a.confidence>=angles?'#4dff91':'#ffc800';
       oCtx.font=`500 ${Math.max(8,fs*0.65)}px DM Sans,sans-serif`;
-      oCtx.fillText(`${a.confidence}/${numAngles}`,a.x,a.y+ar+Math.max(8,fs*0.65));
+      oCtx.fillText(`${a.confidence}/${angles}`,a.x,a.y+ar+Math.max(8,fs*0.65));
     }
   });
 }
 
 // ─── Arrow chips ──────────────────────────────────────────────────────────────
 function updateArrowChips(){
-  const face=FACES[currentFace];
+  const face=getFace(currentFace);
   const c=document.getElementById('arrowChips');
-  if(!arrows.length){c.innerHTML='';return;}
-  c.innerHTML=arrows.map((a,i)=>`
-    <div class="arrow-chip" onclick="openCorrect(${i})">
-      <div class="dot" style="background:${face.colors[a.score]||'#555'}"></div>
-      <span>Arrow ${i+1}</span>
-      <strong>${a.score}</strong>
-      ${a.confidence&&numAngles>1?`<span style="font-size:10px;color:${a.confidence>=numAngles?'var(--success)':'var(--warn)'}">${a.confidence}/${numAngles}</span>`:''}
-      <i class="ti ti-edit" aria-hidden="true"></i>
-    </div>`).join('');
+  if(face.multiSpot){
+    if(!spotStates.length){c.innerHTML='';return;}
+    c.innerHTML=spotStates.map((spot,i)=>{
+      if(!spot.arrow) return`<div class="spot-group-label">${spot.label}</div><div class="arrow-chip" style="opacity:.5"><i class="ti ti-target" aria-hidden="true"></i><span>No arrow</span></div>`;
+      const col=SPOT_FACE.colors[spot.arrow.score]||'#555';
+      return`<div class="spot-group-label">${spot.label}</div>
+        <div class="arrow-chip" onclick="openCorrect3Spot(${i})">
+          <div class="dot" style="background:${col}"></div>
+          <span>${spot.label}</span>
+          <strong>${spot.arrow.score}</strong>
+          <i class="ti ti-edit" aria-hidden="true"></i>
+        </div>`;
+    }).join('');
+  } else {
+    if(!arrows.length){c.innerHTML='';return;}
+    c.innerHTML=arrows.map((a,i)=>`
+      <div class="arrow-chip" onclick="openCorrect(${i})">
+        <div class="dot" style="background:${face.colors[a.score]||'#555'}"></div>
+        <span>Arrow ${i+1}</span>
+        <strong>${a.score}</strong>
+        ${a.confidence&&numAngles>1?`<span style="font-size:10px;color:${a.confidence>=numAngles?'var(--success)':'var(--warn)'}">${a.confidence}/${numAngles}</span>`:''}
+        <i class="ti ti-edit" aria-hidden="true"></i>
+      </div>`).join('');
+  }
 }
 
 function updateSaveBtn(){
-  document.getElementById('saveBtn').style.display=arrows.length>0?'flex':'none';
+  const face=getFace(currentFace);
+  const hasArrows=face.multiSpot
+    ?spotStates.some(s=>s.arrow)
+    :arrows.length>0;
+  document.getElementById('saveBtn').style.display=hasArrows?'flex':'none';
 }
 
 function clearArrows(){
-  arrows=[];tapMode=false;tapCanvas.style.cursor='crosshair';
+  arrows=[];spotStates=[];tapMode=false;tapCanvas.style.cursor='crosshair';
   document.getElementById('triResult').style.display='none';
   renderOverlay();updateArrowChips();updateSaveBtn();
   setStatus('info','Cleared');
@@ -986,39 +1024,70 @@ function clearArrows(){
 
 // ─── Correction modal ─────────────────────────────────────────────────────────
 function openCorrect(idx){
-  correctingIdx=idx; pendingScore=arrows[idx].score;
-  document.getElementById('modalArrowNum').textContent=idx+1;
-  const face=FACES[currentFace];
-  document.getElementById('scoreGrid').innerHTML=face.scores.map(s=>
-    `<button class="score-grid-btn${s===pendingScore?' active':''}" onclick="setCorrectScore(${typeof s==='string'?`'${s}'`:s})">${s}</button>`
-  ).join('');
+  correctingIdx=idx;pendingScore=arrows[idx].score;
+  document.getElementById('modalTitle').textContent=`Correct score — arrow ${idx+1}`;
+  buildScoreGrid(getFace(currentFace).scores,pendingScore);
   document.getElementById('correctModal').style.display='flex';
 }
+
+function openCorrect3Spot(spotIdx){
+  correctingIdx=spotIdx;
+  const spot=spotStates[spotIdx];
+  pendingScore=spot.arrow?spot.arrow.score:'M';
+  document.getElementById('modalTitle').textContent=`Correct score — ${spot.label}`;
+  buildScoreGrid(SPOT_FACE.scores,pendingScore);
+  document.getElementById('correctModal').style.display='flex';
+}
+
+function buildScoreGrid(scores,current){
+  document.getElementById('scoreGrid').innerHTML=scores.map(s=>
+    `<button class="score-grid-btn${s===current?' active':''}" onclick="setCorrectScore(${typeof s==='string'?`'${s}'`:s})">${s}</button>`
+  ).join('');
+  document.querySelector('.miss-btn').style.background=current==='M'?'rgba(255,77,77,.18)':'rgba(255,77,77,.06)';
+}
+
 function setCorrectScore(s){
   pendingScore=s;
   document.querySelectorAll('.score-grid-btn').forEach(b=>b.classList.toggle('active',String(b.textContent)===String(s)));
   document.querySelector('.miss-btn').style.background=s==='M'?'rgba(255,77,77,.18)':'rgba(255,77,77,.06)';
 }
+
 function confirmCorrect(){
   if(correctingIdx>=0&&pendingScore!==null){
-    arrows[correctingIdx].score=pendingScore;
-    delete arrows[correctingIdx].confidence;
-    renderOverlay();updateArrowChips();
+    const face=getFace(currentFace);
+    if(face.multiSpot){
+      const spot=spotStates[correctingIdx];
+      if(!spot.arrow) spot.arrow={x:spot.center.x,y:spot.center.y,score:pendingScore};
+      else spot.arrow.score=pendingScore;
+    } else {
+      arrows[correctingIdx].score=pendingScore;
+      delete arrows[correctingIdx].confidence;
+    }
+    renderOverlay();updateArrowChips();updateSaveBtn();
   }
   closeModal();
 }
+
 function closeModal(){document.getElementById('correctModal').style.display='none';correctingIdx=-1;pendingScore=null;}
 function closeModalOutside(e){if(e.target===document.getElementById('correctModal'))closeModal();}
 
 // ─── Save end ─────────────────────────────────────────────────────────────────
 function saveEnd(){
-  if(!arrows.length) return;
-  const scores=arrows.map(a=>a.score);
-  const total=scores.reduce((s,v)=>s+scoreValue(v),0);
+  const face=getFace(currentFace);
+  let scores,total;
+  if(face.multiSpot){
+    scores=spotStates.map(s=>s.arrow?s.arrow.score:'M');
+    total=scores.reduce((s,v)=>s+scoreValue(v),0);
+  } else {
+    if(!arrows.length) return;
+    scores=arrows.map(a=>a.score);
+    total=scores.reduce((s,v)=>s+scoreValue(v),0);
+  }
   ends.push({scores,total,face:currentFace,angles:numAngles});
   updateScorePanel();
   document.getElementById('scorePanel').style.display='block';
-  arrows=[];tapMode=false;targetCenter=null;targetRadius=null;currentAngleView=0;
+  // Reset
+  arrows=[];spotStates=[];tapMode=false;targetCenter=null;targetRadius=null;
   document.getElementById('triResult').style.display='none';
   document.getElementById('cameraArea').style.display='none';
   document.getElementById('angleProgress').style.display='none';
@@ -1039,11 +1108,13 @@ function updateScorePanel(){
   document.getElementById('scoreMeta').textContent=`${ends.length} end${ends.length!==1?'s':''} · ${totalArrows} arrows`;
   document.getElementById('sessionBadge').textContent=`${grand} pts`;
   document.getElementById('endsList').innerHTML=ends.map((end,i)=>{
-    const f=FACES[end.face]||FACES[currentFace];
-    const pills=end.scores.map(s=>`<div class="score-pill" style="background:${f.colors[s]||'#333'};color:${f.textColors[s]||'#fff'}">${s}</div>`).join('');
-    const angleTag=end.angles>1?`<span style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-left:4px">${end.angles}📷</span>`:'';
+    const f=getFace(end.face);
+    const scoreSet=f.multiSpot?SPOT_FACE:f;
+    const pills=end.scores.map(s=>`<div class="score-pill" style="background:${scoreSet.colors[s]||'#333'};color:${scoreSet.textColors[s]||'#fff'}">${s}</div>`).join('');
+    const tag=end.angles>1?` <span style="font-size:10px;color:var(--text3)">${end.angles}📷</span>`:'';
+    const faceTag=f.multiSpot?` <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">${f.label.replace('Triangular ','△ ').replace('Vertical ','↕ ')}</span>`:'';
     return`<div class="end-row">
-      <span class="end-label">E${i+1}${angleTag}</span>
+      <span class="end-label">E${i+1}${tag}${faceTag}</span>
       <div class="end-scores">${pills}</div>
       <span class="end-subtotal">${end.total}</span>
     </div>`;
@@ -1056,6 +1127,102 @@ function resetSession(){
   ends=[];
   document.getElementById('scorePanel').style.display='none';
   document.getElementById('sessionBadge').textContent='0 pts';
+}
+
+// ─── Multi-angle (single face only) ───────────────────────────────────────────
+function processMultiAngle(){
+  setStatus('info','Detecting targets in each photo...');
+  document.getElementById('multiSlots').style.display='none';
+  document.getElementById('cameraArea').style.display='block';
+  document.getElementById('angleProgress').style.display='flex';
+  const refImg=angleImages[0];
+  photoW=refImg.width;photoH=refImg.height;
+  resizeCanvases(photoW,photoH);
+  pCtx.drawImage(refImg,0,0);
+  currentAngleView=0;
+  updateAngleProgress(-1);
+  setTimeout(()=>detectAllAngles(),80);
+}
+
+function updateAngleProgress(cur){
+  const labels=['Front','Side','Top'].slice(0,numAngles);
+  document.getElementById('angleProgress').innerHTML=labels.map((l,i)=>{
+    let cls='angle-step';
+    if(i<cur) cls+=' done';else if(i===cur) cls+=' current';
+    return`<div class="${cls}"><span class="step-name">${i<cur?'✓ ':''}${l}</span></div>`;
+  }).join('');
+}
+
+function detectAllAngles(){
+  const face=getFace(currentFace);
+  const goldFrac=face.ringFractions[face.ringFractions.length-2];
+  const results=[];
+  for(let i=0;i<numAngles;i++){
+    updateAngleProgress(i);
+    const data=angleImageDatas[i];
+    const ellipse=fitGoldEllipse(data);
+    if(!ellipse){setStatus('warn',`Photo ${i+1}: gold zone not found`);showFirstImageAndTap();return;}
+    const goldR=ellipse.a,targetR=goldR/goldFrac;
+    angleTargets[i]={center:{x:ellipse.cx,y:ellipse.cy},radius:targetR,ellipse};
+    const transform=buildPerspectiveTransform(ellipse,goldFrac);
+    if(!transform){setStatus('warn',`Photo ${i+1}: perspective failed`);showFirstImageAndTap();return;}
+    const clusters=findDarkClusters(data,ellipse.cx,ellipse.cy,targetR);
+    const good=clusters.filter(c=>c.length>=6).slice(0,arrowsPerEnd);
+    results.push({transform,arrowsNorm:good.map(c=>{const ct=centroid(c);return transform(ct.x,ct.y);})});
+  }
+  updateAngleProgress(numAngles);
+  triangulateArrows(results);
+}
+
+function triangulateArrows(results){
+  const allNorm=results.flatMap(r=>r.arrowsNorm);
+  if(!allNorm.length){setStatus('warn','No arrows in any angle — tap mode');showFirstImageAndTap();return;}
+  const normPts=allNorm.map(p=>({x:p.x,y:p.y}));
+  const clusters=clusterPoints(normPts,0.18);
+  const face=getFace(currentFace);
+  const goldFrac=face.ringFractions[face.ringFractions.length-2];
+  const ref=angleTargets[0];
+  targetCenter=ref.center;targetRadius=ref.radius;
+  arrows=clusters.slice(0,arrowsPerEnd).map(c=>{
+    const nx=c.reduce((s,p)=>s+p.x,0)/c.length;
+    const ny=c.reduce((s,p)=>s+p.y,0)/c.length;
+    const frac=Math.sqrt(nx*nx+ny*ny);
+    const px=Math.round(targetCenter.x+nx*targetRadius);
+    const py=Math.round(targetCenter.y+ny*targetRadius);
+    return{x:px,y:py,score:face.scoreAtFrac(frac),confidence:c.length};
+  });
+  const avgConf=(arrows.reduce((s,a)=>s+a.confidence,0)/Math.max(1,arrows.length)).toFixed(1);
+  const tri=document.getElementById('triResult');
+  tri.style.display='block';
+  tri.innerHTML=`<i class="ti ti-chart-dots" style="margin-right:6px" aria-hidden="true"></i>Triangulated from ${numAngles} angles · avg ${avgConf}/${numAngles} views per arrow`;
+  renderOverlay();updateArrowChips();updateSaveBtn();
+  if(arrows.length<arrowsPerEnd){
+    setStatus('warn',`Found ${arrows.length}/${arrowsPerEnd} — tap to add rest`);
+    enterTapMode(true,false);
+  } else {
+    setStatus('ok',`${arrows.length} arrows scored from ${numAngles} angles — tap any to correct`);
+  }
+}
+
+function showFirstImageAndTap(){
+  const refImg=angleImages[0];
+  if(refImg){
+    photoW=refImg.width;photoH=refImg.height;
+    resizeCanvases(photoW,photoH);pCtx.drawImage(refImg,0,0);
+    const data=angleImageDatas[0];
+    const gc=findGoldCentroid(data);
+    if(gc){
+      const gr=estimateGoldRadius(data,gc.x,gc.y);
+      if(gr>8){
+        targetCenter=gc;
+        const face=getFace(currentFace);
+        targetRadius=Math.round(gr/face.ringFractions[face.ringFractions.length-2]);
+        renderOverlay();
+      }
+    }
+  }
+  document.getElementById('angleProgress').style.display='none';
+  enterTapMode(false,!targetCenter);
 }
 
 if('serviceWorker' in navigator){
