@@ -193,7 +193,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 <div class="angle-bar" id="angleBar">
   <div class="angle-bar-label">
     Photo angles
-    <span>More angles = better accuracy on borderline arrows</span>
+    <span>2–3 angles resolves borderline arrows more accurately</span>
   </div>
   <div class="toggle-group">
     <button class="toggle-btn active" data-angles="1" onclick="setAngles(this)">1</button>
@@ -206,7 +206,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 <div id="uploadZone" class="upload-zone" onclick="document.getElementById('fileInput').click()" role="button">
   <div class="upload-icon"><i class="ti ti-camera" aria-hidden="true"></i></div>
   <div class="upload-title" id="uploadTitle">Take or upload a photo</div>
-  <div class="upload-sub" id="uploadSub">Point at your target after shooting</div>
+  <div class="upload-sub" id="uploadSub">Gold zone must be visible — full target not needed</div>
   <div class="upload-note"><i class="ti ti-lock" aria-hidden="true"></i>Photo stays on your device</div>
   <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event,0)">
 </div>
@@ -439,8 +439,8 @@ function setAngles(btn){
 
 function buildSlots(){
   const labels=numAngles===2
-    ?[['Straight on','Front'],['Side angle','~45° side']]
-    :[['Straight on','Front'],['Side angle','~45° side'],['Top angle','~45° above']];
+    ?[['Angled left','~45° from your left'],['Angled right','~45° from your right']]
+    :[['Angled left','~45° from your left'],['Angled right','~45° from your right'],['Angled above','~45° from above']];
   document.getElementById('photoSlots').className=`photo-slots slots-${numAngles}`;
   document.getElementById('photoSlots').innerHTML=labels.map((l,i)=>`
     <div class="photo-slot" id="slot-${i}" onclick="triggerSlotInput(${i})">
@@ -1145,7 +1145,7 @@ function processMultiAngle(){
 }
 
 function updateAngleProgress(cur){
-  const labels=['Front','Side','Top'].slice(0,numAngles);
+  const labels=['Left','Right','Above'].slice(0,numAngles);
   document.getElementById('angleProgress').innerHTML=labels.map((l,i)=>{
     let cls='angle-step';
     if(i<cur) cls+=' done';else if(i===cur) cls+=' current';
